@@ -13,7 +13,7 @@
         "lint": "eslint .",
         "format": "prettier --write '**/*.{js,ts,tsx,json}'",
         "compile": "tsc -p .",
-        "test": "bin/run 'bash ./test/sleep.sh'"
+        "test": "bin/run 'bash ./test/test-servers/count-down.sh'"
     },
     "author": "Xingchen Hong <hello@xc-h.com>",
     "license": "MIT",
