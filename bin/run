@@ -1,0 +1,10 @@
+#!/usr/bin/env node
+
+var devMode = require('fs').existsSync(`${__dirname}/../src`);
+
+if (!devMode) {
+    require(`${__dirname}/../build/cli`).run(process.argv);
+} else {
+    require('ts-node').register({ project: `${__dirname}/../tsconfig.json` });
+    require(`${__dirname}/../src/cli`).run(process.argv);
+}

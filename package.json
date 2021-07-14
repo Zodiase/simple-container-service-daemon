@@ -1,0 +1,41 @@
+{
+    "name": "@xch/simple-container-service-daemon",
+    "version": "0.0.1",
+    "description": "Runtime manager of the yerba runtime container.",
+    "bin": {
+        "serviced": "bin/run"
+    },
+    "engines": {
+        "node": ">=12.20.2"
+    },
+    "main": "src/index.ts",
+    "scripts": {
+        "lint": "eslint .",
+        "format": "prettier --write '**/*.{js,ts,tsx,json}'",
+        "compile": "tsc -p .",
+        "test": "bin/run 'bash ./test/sleep.sh'"
+    },
+    "author": "Xingchen Hong <hello@xc-h.com>",
+    "license": "MIT",
+    "prettier": "@xch/prettier-config",
+    "devDependencies": {
+        "@types/express": "^4.17.12",
+        "@types/node": "^12.20.15",
+        "@types/semver": "^7.3.6",
+        "@types/yargs": "^17.0.2",
+        "@typescript-eslint/eslint-plugin": "^4.28.3",
+        "@typescript-eslint/parser": "^4.28.3",
+        "@xch/prettier-config": "^0.0.1",
+        "eslint": "^7.30.0",
+        "eslint-config-prettier": "^8.3.0",
+        "eslint-plugin-node": "^11.1.0",
+        "prettier": "2.3.2",
+        "ts-node": "^10.0.0",
+        "typescript": "^4.3.5"
+    },
+    "dependencies": {
+        "express": "^4.17.1",
+        "semver": "^7.3.5",
+        "yargs": "^17.0.1"
+    }
+}
