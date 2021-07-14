@@ -21,7 +21,7 @@ export const run = async (argv: string[]): Promise<void> => {
                         alias: 'p',
                         type: 'number',
                         describe: 'port to listen to',
-                        default: 8088,
+                        default: 32366,
                     })
                     .option('cwd', {
                         type: 'string',
