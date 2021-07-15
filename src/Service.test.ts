@@ -1,5 +1,5 @@
 import { resolve as resolvePath } from 'path';
-import { createService, Service, ServiceOptions } from './service';
+import { createService, Service, ServiceOptions } from './Service';
 
 const waitTimeForShell = 10;
 //! node takes a bit longer to run.

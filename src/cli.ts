@@ -1,8 +1,8 @@
 import process from 'process';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { createReception } from './reception';
-import { createService } from './service';
+import { createReception } from './Reception';
+import { createService } from './Service';
 
 export const run = async (argv: string[]): Promise<void> => {
     await yargs(hideBin(argv))
