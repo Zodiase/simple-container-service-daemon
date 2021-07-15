@@ -243,9 +243,9 @@ describe('Service', () => {
 
             // First start.
             await expect(service.start()).resolves.toBeUndefined();
-            expect(service.isRunning()).toBe(true);
-            expect(onError).not.toBeCalled();
-            expect(onClose).not.toBeCalled();
+
+            //! Do not assert before the delay as it's unreliable.
+
             await delay(waitTimeForShell);
             // This one crashes.
             expect(onError).toBeCalled();
@@ -256,9 +256,9 @@ describe('Service', () => {
 
             // Second start.
             await expect(service.start()).resolves.toBeUndefined();
-            expect(service.isRunning()).toBe(true);
-            expect(onError).not.toBeCalled();
-            expect(onClose).not.toBeCalled();
+
+            //! Do not assert before the delay as it's unreliable.
+
             await delay(waitTimeForShell);
             // This one crashes.
             expect(onError).toBeCalled();

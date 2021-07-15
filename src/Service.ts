@@ -107,12 +107,25 @@ export function createService({
      * @param signal
      */
     const onProcessClosed = (code: null | number, signal: null | NodeJS.Signals): void => {
-        //! Do anything about `starting`?
+        if (starting && !starting.finalized()) {
+            /**
+             * !!!!
+             * Technically, we should `.reject` here because the starting failed.
+             * However, doing so would result in a unique behavior for node >=15.1.0.
+             * For node <15.1.0, `service.start()` always succeeds.
+             *
+             * So for now let's still `.resolve` here to keep the behavior consistent.
+             * The general error/closure handling should still do its job.
+             */
+            starting.resolve();
+        }
 
-        terminating?.resolve({
-            code,
-            signal,
-        });
+        if (terminating && !terminating.finalized()) {
+            terminating.resolve({
+                code,
+                signal,
+            });
+        }
 
         resetService();
 
