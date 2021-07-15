@@ -1,14 +1,34 @@
+export enum ControlledPromiseStatus {
+    Pending = 0b00,
+    Resolved = 0b01,
+    Rejected = 0b11,
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ControlledPromiseState<TValue, TReason = any> =
+    | {
+          status: ControlledPromiseStatus.Pending;
+      }
+    | {
+          status: ControlledPromiseStatus.Resolved;
+          value: TValue;
+      }
+    | {
+          status: ControlledPromiseStatus.Rejected;
+          reason: TReason;
+      };
+
 export interface ControlledPromise<T> {
-    resolve: (value: T | PromiseLike<T>) => void;
+    /**
+     * Returns a promise that is finalized when the controlled promise is finalized.
+     * If the controlled promise is already finalized, the promise is finalized immediately.
+     */
+    promise(): Promise<T>;
+    resolve: (value: T) => void;
     /**
      * Returns true if the controlled promise has been resolved.
      */
     resolved(): boolean;
-    /**
-     * Returns a promise that is resolved when the controlled promise is resolved.
-     * If the controlled promise is already resolved, the promise is resolved immediately.
-     */
-    resolving(): Promise<void>;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     reject: (reason?: any) => void;
     /**
@@ -16,29 +36,18 @@ export interface ControlledPromise<T> {
      */
     rejected(): boolean;
     /**
-     * Returns a promise that is resolved when the controlled promise is rejected.
-     * If the controlled promise is already rejected, the promise is resolved immediately.
-     */
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    rejecting(): Promise<void>;
-    /**
      * Returns true if the controlled promise has been finalized.
      */
     finalized(): boolean;
-    /**
-     * Returns a promise that is resolved when the controlled promise is finalized.
-     * If the controlled promise is already finalized, the promise is resolved immediately.
-     */
-    finalizing(): Promise<void>;
 }
 
 export function createControlledPromise<T>(): ControlledPromise<T> {
     let resolveRef: (value: T | PromiseLike<T>) => void = NOOP;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let rejectRef: (reason?: any) => void = NOOP;
-    let resolved = false;
-    let rejected = false;
-    let finalized = false;
+    let state: ControlledPromiseState<T> = {
+        status: ControlledPromiseStatus.Pending,
+    };
 
     const promise = new Promise<T>((resolve, reject) => {
         resolveRef = resolve;
@@ -46,54 +55,44 @@ export function createControlledPromise<T>(): ControlledPromise<T> {
     });
 
     const controlledPromise: ControlledPromise<T> = {
+        promise: async () => {
+            if (state.status === ControlledPromiseStatus.Resolved) {
+                return state.value;
+            }
+
+            if (state.status === ControlledPromiseStatus.Rejected) {
+                throw state.reason;
+            }
+
+            return await promise;
+        },
         resolve: (value) => {
-            if (finalized) {
+            if (state.status !== ControlledPromiseStatus.Pending) {
                 return;
             }
 
-            resolved = true;
-            finalized = true;
+            state = {
+                status: ControlledPromiseStatus.Resolved,
+                value,
+            };
+
             resolveRef(value);
         },
-        resolved: () => resolved,
-        resolving: async () => {
-            if (resolved) {
-                return;
-            }
-
-            return new Promise((resolve) => {
-                promise.then(() => resolve(), null);
-            });
-        },
+        resolved: () => state.status === ControlledPromiseStatus.Resolved,
         reject: (reason) => {
-            if (finalized) {
+            if (state.status !== ControlledPromiseStatus.Pending) {
                 return;
             }
 
-            rejected = true;
-            finalized = true;
+            state = {
+                status: ControlledPromiseStatus.Rejected,
+                reason,
+            };
+
             rejectRef(reason);
         },
-        rejected: () => rejected,
-        rejecting: async () => {
-            if (rejected) {
-                return;
-            }
-
-            return new Promise((resolve) => {
-                promise.then(null, () => resolve());
-            });
-        },
-        finalized: () => finalized,
-        finalizing: async () => {
-            if (finalized) {
-                return;
-            }
-
-            return new Promise((resolve) => {
-                promise.finally(() => resolve());
-            });
-        },
+        rejected: () => state.status === ControlledPromiseStatus.Rejected,
+        finalized: () => state.status !== ControlledPromiseStatus.Pending,
     };
 
     return controlledPromise;

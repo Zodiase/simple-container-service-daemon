@@ -153,7 +153,7 @@ export function createService({
                 starting.resolve();
             }
 
-            await starting.resolving();
+            await starting.promise();
         },
         terminate: async () => {
             if (starting === null) {
@@ -181,7 +181,7 @@ export function createService({
                 }
             }
 
-            await terminating.resolving();
+            await terminating.promise();
         },
     };
 }
