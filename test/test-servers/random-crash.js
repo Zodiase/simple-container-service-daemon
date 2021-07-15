@@ -1,3 +1,7 @@
+/**
+ * This test server will crash randomly.
+ */
+
 const failureRate = 0.3;
 const emulateFailures = false;
 
