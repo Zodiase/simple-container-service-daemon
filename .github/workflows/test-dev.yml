@@ -1,0 +1,57 @@
+name: Dev Branch CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the dev branch
+  push:
+    branches: [ dev ]
+  pull_request:
+    branches: [ dev ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [ '12.20.2', '14', '16' ]
+    name: Node ${{ matrix.node }} build
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.2.0
+        with:
+          # Version Spec of the version to use.  Examples: 12.x, 10.15.1, >=10.15.0
+          node-version: ${{ matrix.node }}
+          # Used to specify a package manager for caching in the default directory. Supported values: npm, yarn
+          cache: 'npm'
+
+      - run: npm ci
+      - run: npm run compile
+      - run: npm test
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.2.0
+        with:
+          # Version Spec of the version to use.  Examples: 12.x, 10.15.1, >=10.15.0
+          node-version: '>=12.20.2'
+          # Set this option if you want the action to check for the latest available version that satisfies the version spec
+          check-latest: true
+          # Used to specify a package manager for caching in the default directory. Supported values: npm, yarn
+          cache: 'npm'
+
+      - run: npm ci
+      - run: npm run lint
