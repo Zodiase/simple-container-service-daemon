@@ -89,8 +89,9 @@ export function createReception({ port, onStatus, onStart, onStop, onRestart }: 
 
     return {
         //! This promise should only resolve when the server is terminated.
-        onEnd: () => new Promise(() => {
-            // Left empty.
-        }),
+        onEnd: () =>
+            new Promise(() => {
+                // Left empty.
+            }),
     };
 }

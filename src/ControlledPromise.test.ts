@@ -141,7 +141,7 @@ describe('ControlledPromise', () => {
         expect(action.resolved()).toBe(true);
         expect(action.rejected()).toBe(false);
         expect(action.finalized()).toBe(true);
-    })
+    });
 
     it('can not be resolved after being rejected', async () => {
         const action = createControlledPromise();
@@ -177,7 +177,7 @@ describe('ControlledPromise', () => {
         expect(action.resolved()).toBe(false);
         expect(action.rejected()).toBe(true);
         expect(action.finalized()).toBe(true);
-    })
+    });
 });
 
 async function delay(ms: number): Promise<void> {
