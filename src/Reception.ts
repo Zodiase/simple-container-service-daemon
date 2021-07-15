@@ -63,7 +63,7 @@ export function createReception({ port, onStatus, onStart, onStop, onRestart }: 
             return;
         }
 
-        res.redirect('/');
+        res.redirect(303, '/');
     });
 
     app.post('/stop', async (req, res) => {
@@ -74,13 +74,13 @@ export function createReception({ port, onStatus, onStart, onStop, onRestart }: 
             return;
         }
 
-        res.redirect('/');
+        res.redirect(303, '/');
     });
 
     app.post('/restart', async (req, res) => {
         await onRestart();
 
-        res.redirect('/');
+        res.redirect(303, '/');
     });
 
     app.listen(port, () => {
